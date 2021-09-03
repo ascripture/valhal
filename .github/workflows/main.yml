@@ -30,20 +30,7 @@ jobs:
 
       - name: Build
         run: npm run build
-
-  publish:
-    name: Publish on npm
-
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        node: ['12.x']
-        os: [ubuntu-latest]
-
-    steps:
-      - name: Build
-        run: npm run build
-
+      
       - name: Publish
         uses: JS-DevTools/npm-publish@v1
         with:
