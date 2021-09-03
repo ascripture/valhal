@@ -1,25 +1,14 @@
-import { Store } from "./store";
+import { Config, defaultConfig } from './config';
 
-export interface Type<T> extends Function {
-    new(...args: any[]): T;
-}
+export const PRESET_CONFIG = 'PRESET_CONFIG';
 
-export function StoreConfig<T = any, U = any, M = any>(config: {
-    cacheMS: number;
-    initialState: T,
-}) {
-    return (store: Type<Store<T, U, M>>) => {
-        class ConfiguratedStore extends store {
-            constructor() {
-                super(config.initialState);
-                this.config["storeName"] = config.name;
-                this.configKey = { idKey: "id" };
+export function StoreConfig(config: Partial<Config>) {
+  return function(constructor: any) {
+    constructor[PRESET_CONFIG] = { ...defaultConfig };
 
-                for (let key in config) {
-                    this[configKey][key] = config[key];
-                }
-            }
-        }
-        return ConfiguratedStore;
+    for (let i = 0, keys = Object.keys(config); i < keys.length; i++) {
+      const key = keys[i];
+      constructor[PRESET_CONFIG][key] = (config as any)[key];
     }
+  };
 }

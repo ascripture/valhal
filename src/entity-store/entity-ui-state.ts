@@ -1,4 +1,4 @@
 export interface EntityUIState<ENTITY, UI = any> {
-    entity?: ENTITY;
-    ui?: UI;
+  entity?: ENTITY;
+  ui?: UI;
 }

@@ -1,8 +1,8 @@
 import { EntityStore } from '../entity-store';
-import { select } from './select';
+import { selectBy } from './select-by';
 
-describe('select', () => {
-  it('selects an entity', done => {
+describe('selectBy', () => {
+  it('selects entities by filter', done => {
     const store = new EntityStore<{
       id: string;
       value: number;
@@ -23,13 +23,14 @@ describe('select', () => {
       value: 300,
     });
 
-    select('test2', store).subscribe(result => {
-      expect(result?.value).toEqual(200);
+    selectBy(state => state?.value >= 200, store).subscribe(result => {
+      expect(result[0]?.id).toEqual('test2');
+      expect(result[1]?.id).toEqual('test3');
       done();
     });
   });
 
-  it('selects an entity and reacts to changes', done => {
+  it('selects entities by filter and reacts to changes', done => {
     const store = new EntityStore<{
       id: string;
       value: number;
@@ -50,10 +51,13 @@ describe('select', () => {
       value: 300,
     });
 
-    let expectation = 200;
+    let expectations = ['test2', 'test3'];
     let lastRun = false;
-    select('test2', store).subscribe(result => {
-      expect(result?.value).toEqual(expectation);
+    selectBy(state => state?.value >= 200, store).subscribe(result => {
+      let i = 0;
+      for (const expectation of expectations) {
+        expect(result[i++]?.id).toEqual(expectation);
+      }
 
       if (lastRun) {
         done();
@@ -62,10 +66,10 @@ describe('select', () => {
 
     setTimeout(() => {
       lastRun = true;
-      expectation = 900;
+      expectations = ['test3'];
       store.update({
         id: 'test2',
-        value: 900,
+        value: 199,
       });
     }, 200);
   });
