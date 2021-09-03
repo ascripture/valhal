@@ -40,6 +40,7 @@ jobs:
         node: ['12.x']
         os: [ubuntu-latest]
 
+    steps:
       - name: Build
         run: npm run build
 
