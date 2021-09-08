@@ -8,9 +8,15 @@ export interface EntityStoreData<ENTITY, ID = any>
   data: Map<ID, ENTITY>;
 }
 
+interface EntityConfig {
+  createdAt: number;
+  cacheTimeoutId?: number;
+}
+
 export class EntityStore<ENTITY, ID = any, META = void>
   implements ManyStorable<ENTITY, ID, META> {
   private readonly entityMap: Map<ID, ENTITY>;
+  private readonly entityConfigMap: Map<ID, EntityConfig>;
   private readonly subject: Subject<EntityStoreData<ENTITY>>;
   private readonly _reset: () => void;
   private readonly observable: Observable<EntityStoreData<ENTITY>>;
@@ -20,8 +26,9 @@ export class EntityStore<ENTITY, ID = any, META = void>
   private readonly metaReset: () => void;
   private readonly metaObservable: Observable<META>;
 
-  constructor(protected readonly config: Config = defaultConfig) {
-    this.entityMap = new Map<ID, ENTITY>();
+  constructor(readonly config: Config = defaultConfig) {
+    this.entityMap = new Map();
+    this.entityConfigMap = new Map();
     const { observable, subject, reset } = resettable(
       () => new ReplaySubject<EntityStoreData<ENTITY>>(1)
     );
@@ -57,7 +64,8 @@ export class EntityStore<ENTITY, ID = any, META = void>
     }
 
     const entity = { ...state } as ENTITY;
-    this.entityMap.set(id, entity);
+    this.setEntity(id, entity);
+
     this.next();
   }
 
@@ -81,6 +89,7 @@ export class EntityStore<ENTITY, ID = any, META = void>
     }
 
     this.entityMap.delete(id);
+    this.entityConfigMap.delete(id);
 
     this.next();
   }
@@ -120,7 +129,7 @@ export class EntityStore<ENTITY, ID = any, META = void>
     const current = this.entityMap.get(id);
     const entity = { ...current, ...state } as ENTITY;
 
-    this.entityMap.set(id, entity);
+    this.setEntity(id, entity);
     this.next();
   }
 
@@ -142,6 +151,28 @@ export class EntityStore<ENTITY, ID = any, META = void>
   private next() {
     this.subject.next({
       data: new Map(this.entityMap),
+    });
+  }
+
+  private setEntity(id: ID, entity: ENTITY) {
+    this.entityMap.set(id, entity);
+
+    const config = getConfig(this);
+    const timerHandler: TimerHandler = () => {
+      if (process.env.NODE_ENV !== 'production') {
+        console.info(
+          `Remove cached entity ${id} as cache timeout was triggered.`
+        );
+      }
+      this.remove(id);
+    };
+    const timeoutId = config?.cacheMS
+      ? setTimeout(timerHandler, this.config.cacheMS)
+      : undefined;
+
+    this.entityConfigMap.set(id, {
+      cacheTimeoutId: timeoutId,
+      createdAt: Date.now(),
     });
   }
 }

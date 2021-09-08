@@ -10,6 +10,7 @@ export interface StorableConstructor<STATE, KEY = string, META = any> {
 }
 
 export interface Storable<STATE> {
+  config: Config;
   asObservable(): Observable<STATE>;
   get(): STATE | undefined;
   set(state: STATE): void;

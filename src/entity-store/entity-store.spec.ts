@@ -82,4 +82,59 @@ describe('EntityStore', () => {
       done();
     });
   });
+
+  it('caches entities in the store for 500ms', done => {
+    const store = new EntityStore<{ id: string; value: number }>({
+      cacheMS: 500,
+      idPath: ['id'],
+    });
+
+    store.add({
+      id: 'x',
+      value: 100,
+    });
+
+    store.add({
+      id: 'y',
+      value: 200,
+    });
+
+    store.add({
+      id: 'z',
+      value: 300,
+    });
+
+    setTimeout(() => {
+      select('x', store)
+        .pipe(take(1))
+        .subscribe(result => {
+          expect(result?.value).toEqual(100);
+        });
+    }, 200);
+
+    setTimeout(() => {
+      select('y', store)
+        .pipe(take(1))
+        .subscribe(result => {
+          expect(result?.value).toEqual(200);
+        });
+    }, 400);
+
+    setTimeout(() => {
+      select('z', store)
+        .pipe(take(1))
+        .subscribe(result => {
+          expect(result?.value).toEqual(300);
+        });
+    }, 300);
+
+    setTimeout(() => {
+      select('y', store)
+        .pipe(take(1))
+        .subscribe(result => {
+          expect(result).toBeUndefined();
+          done();
+        });
+    }, 550);
+  });
 });

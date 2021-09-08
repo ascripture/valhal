@@ -9,7 +9,7 @@ export class Store<STATE> implements Storable<STATE> {
   private readonly _reset: () => void;
   private readonly observable: Observable<STATE>;
 
-  constructor(protected readonly config: Config = defaultConfig) {
+  constructor(readonly config: Config = defaultConfig) {
     const { observable, subject, reset } = resettable(
       () => new ReplaySubject<STATE>(1)
     );
