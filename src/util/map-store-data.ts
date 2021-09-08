@@ -1,8 +1,8 @@
-import { StoreData } from '../store';
+import { StorableData } from '../storable';
 
 export function mapStoreData<ID, STATE>(
   id: ID | undefined,
-  storeData: StoreData<ID, STATE>
+  storeData: StorableData<ID, STATE>
 ) {
   if (id && storeData?.data instanceof Map) {
     return storeData.data?.get(id);

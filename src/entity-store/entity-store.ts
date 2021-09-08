@@ -1,41 +1,52 @@
 import { Observable, ReplaySubject, Subject } from 'rxjs';
-import { distinctUntilChanged, map } from 'rxjs/operators';
 import { getConfig, nestedPathValue, resettable } from '../util';
-import { Store, StoreData } from '../store';
+import { ManyStorable, StorableData } from '../storable';
 import { Config, defaultConfig } from '../config';
 
 export interface EntityStoreData<ENTITY, ID = any>
-  extends StoreData<ID, ENTITY> {
+  extends StorableData<ID, ENTITY> {
   data: Map<ID, ENTITY>;
 }
 
-export class EntityStore<ENTITY, ID = any, META = any>
-  implements Store<ENTITY, ID, META> {
+export class EntityStore<ENTITY, ID = any, META = void>
+  implements ManyStorable<ENTITY, ID, META> {
   private readonly entityMap: Map<ID, ENTITY>;
   private readonly subject: Subject<EntityStoreData<ENTITY>>;
   private readonly _reset: () => void;
   private readonly observable: Observable<EntityStoreData<ENTITY>>;
+
   private metadata: META | undefined;
+  private readonly metaSubject: Subject<META>;
+  private readonly metaReset: () => void;
+  private readonly metaObservable: Observable<META>;
 
   constructor(protected readonly config: Config = defaultConfig) {
     this.entityMap = new Map<ID, ENTITY>();
     const { observable, subject, reset } = resettable(
       () => new ReplaySubject<EntityStoreData<ENTITY>>(1)
     );
+
     this.subject = subject;
     this.observable = observable;
     this._reset = reset;
+
+    const {
+      observable: metaObservable,
+      subject: metaSubject,
+      reset: metaReset,
+    } = resettable(() => new ReplaySubject<META>(1));
+
+    this.metaSubject = metaSubject;
+    this.metaObservable = metaObservable;
+    this.metaReset = metaReset;
   }
 
-  asObservable() {
+  asEntityObservable() {
     return this.observable;
   }
 
-  selectEntity(id: ID) {
-    return this.asObservable().pipe(
-      map(store => store?.data?.get(id)),
-      distinctUntilChanged()
-    );
+  asObservable() {
+    return this.metaObservable;
   }
 
   add(state: Partial<ENTITY>) {
@@ -56,11 +67,11 @@ export class EntityStore<ENTITY, ID = any, META = any>
     };
   }
 
-  get(id: ID) {
+  getBy(id: ID) {
     return this.entityMap.get(id);
   }
 
-  getMetadata() {
+  get() {
     return this.metadata;
   }
 
@@ -75,14 +86,27 @@ export class EntityStore<ENTITY, ID = any, META = any>
   }
 
   reset() {
+    this.entityMap.clear();
+    this.metadata = undefined;
     this._reset();
+    this.metaReset();
   }
 
-  setMetadata(data: META) {
+  set(data: META) {
     this.metadata = data;
+    this.metaSubject.next(this.metadata);
   }
 
-  update(state: Partial<ENTITY>) {
+  update(state: Partial<META>) {
+    if (!state) {
+      throw new Error(`Meta State is undefined or null.`);
+    }
+
+    this.metadata = { ...this.metadata, ...state } as META;
+    this.metaSubject.next(this.metadata);
+  }
+
+  updateBy(state: Partial<ENTITY>) {
     if (!state) {
       throw new Error(`Entity is undefined or null.`);
     }

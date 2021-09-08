@@ -1,12 +1,12 @@
 import { distinctUntilChanged, map } from 'rxjs/operators';
-import { Store } from '../store';
+import { ManyStorable } from '../storable';
 import { mapStoreDataToArray } from '../util';
 
-export function selectBy<ID, STATE>(
+export function selectBy<ID, STATE, META = any>(
   by: (state: STATE, index?: number, all?: STATE[]) => boolean,
-  store: Store<STATE, ID>
+  store: ManyStorable<STATE, ID, META>
 ) {
-  return store.asObservable().pipe(
+  return store.asEntityObservable().pipe(
     map(store => mapStoreDataToArray(store)),
     map(store => store.filter(by)),
     distinctUntilChanged()

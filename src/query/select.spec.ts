@@ -63,7 +63,7 @@ describe('select', () => {
     setTimeout(() => {
       lastRun = true;
       expectation = 900;
-      store.update({
+      store.updateBy({
         id: 'test2',
         value: 900,
       });

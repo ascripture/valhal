@@ -1,12 +1,13 @@
 import { take } from 'rxjs/operators';
 import { EntityStore } from './entity-store';
+import { select } from '../query';
 
 describe('EntityStore', () => {
   it('adds entities to the store', done => {
     const store = new EntityStore<{ id: string; value: number }>();
 
     let run = 0;
-    store.selectEntity('x').subscribe(data => {
+    select('x', store).subscribe(data => {
       expect(data?.value).toEqual(100);
       run++;
     });
@@ -21,13 +22,13 @@ describe('EntityStore', () => {
       value: 200,
     });
 
-    store.selectEntity('y').subscribe(data => {
+    select('y', store).subscribe(data => {
       expect(data?.value).toEqual(200);
     });
 
     let value = 0;
     let called = 0;
-    store.asObservable().subscribe(store => {
+    store.asEntityObservable().subscribe(store => {
       value = Array.from(store.data.values()).reduce(
         (acc, next) => acc + (next?.value ?? 0),
         0
@@ -61,8 +62,7 @@ describe('EntityStore', () => {
       value: 300,
     });
 
-    store
-      .selectEntity('y')
+    select('y', store)
       .pipe(take(1))
       .subscribe(result => {
         expect(result?.value).toEqual(200);
@@ -77,7 +77,7 @@ describe('EntityStore', () => {
     expect(entities1.data.get('y')?.value).toEqual(200);
     expect(entities2.data.get('y')).toBeUndefined();
 
-    store.selectEntity('y').subscribe(result => {
+    select('y', store).subscribe(result => {
       expect(result).toBeUndefined();
       done();
     });

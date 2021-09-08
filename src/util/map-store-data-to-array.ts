@@ -1,7 +1,7 @@
-import { StoreData } from '../store';
+import { StorableData } from '../storable';
 
 export function mapStoreDataToArray<ID, STATE>(
-  storeData: StoreData<ID, STATE>
+  storeData: StorableData<ID, STATE>
 ) {
   if (storeData?.data instanceof Map) {
     return Array.from(storeData.data?.values());

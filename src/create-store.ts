@@ -1,9 +1,9 @@
 import { Config } from './config';
-import { Store, StoreConstructor } from './store';
+import { ManyStorable, StorableConstructor } from './storable';
 
 export function createStore<STATE, KEY = string, META = any>(
-  ctor: StoreConstructor<STATE, KEY, META>,
+  ctor: StorableConstructor<STATE, KEY, META>,
   config: Config
-): Store<STATE, KEY, META> {
+): ManyStorable<STATE, KEY, META> {
   return new ctor(config);
 }

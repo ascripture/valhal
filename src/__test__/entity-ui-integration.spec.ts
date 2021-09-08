@@ -30,7 +30,7 @@ describe('EntityUIIntegration', () => {
       },
     });
 
-    const result = entityStore.get('test');
+    const result = entityStore.getBy('test');
     expect(result?.entity?.value).toEqual(500);
     expect(result?.ui?.isLoading).toBeTruthy();
   });
