@@ -1,5 +1,5 @@
 {
-  "version": "0.2.0",
+  "version": "0.3.0",
   "license": "MIT",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -35,14 +35,14 @@
   },
   "name": "@ascripture/valhal",
   "author": "Philipp Schladitz",
-  "module": "dist/statish.esm.js",
+  "module": "dist/valhal.esm.js",
   "size-limit": [
     {
-      "path": "dist/statish.cjs.production.min.js",
+      "path": "dist/valhal.cjs.production.min.js",
       "limit": "10 KB"
     },
     {
-      "path": "dist/statish.esm.js",
+      "path": "dist/valhal.esm.js",
       "limit": "10 KB"
     }
   ],
