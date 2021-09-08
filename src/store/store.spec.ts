@@ -28,7 +28,7 @@ describe('Store', () => {
       if (run === 0) {
         expect(result?.value).toEqual(100);
       } else {
-          expect(result).toBeUndefined();
+        expect(result).toBeUndefined();
       }
 
       run++;
@@ -39,7 +39,7 @@ describe('Store', () => {
     });
 
     setTimeout(() => {
-        store.reset();
+      store.reset();
     });
 
     setTimeout(() => {

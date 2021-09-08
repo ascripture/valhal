@@ -3,8 +3,7 @@ import { resettable } from '../util';
 import { Config, defaultConfig } from '../config';
 import { Storable } from '..';
 
-export class Store<STATE>
-  implements Storable<STATE> {
+export class Store<STATE> implements Storable<STATE> {
   private state: STATE | undefined;
   private readonly subject: Subject<STATE>;
   private readonly _reset: () => void;

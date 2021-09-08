@@ -17,7 +17,8 @@ export interface Storable<STATE> {
   reset(): void;
 }
 
-export interface ManyStorable<STATE, KEY = string, META = void> extends Storable<META> {
+export interface ManyStorable<STATE, KEY = string, META = void>
+  extends Storable<META> {
   add(state: Partial<STATE>): void;
   asEntityObservable(): Observable<StorableData<KEY, STATE>>;
   getAll(): StorableData<KEY, STATE>;
