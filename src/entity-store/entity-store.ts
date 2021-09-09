@@ -1,6 +1,6 @@
 import { Observable, ReplaySubject, Subject } from 'rxjs';
 import { getConfig, nestedPathValue, resettable } from '../util';
-import { ManyStorable, StorableData } from '../storable';
+import { ManyStorable, StorableData, CommonState } from '../storable';
 import { Config, defaultConfig } from '../config';
 
 export interface EntityStoreData<ENTITY, ID = any>
@@ -13,7 +13,7 @@ interface EntityConfig {
   cacheTimeoutId?: number;
 }
 
-export class EntityStore<ENTITY, ID = any, META = void>
+export class EntityStore<ENTITY, ID = any, META = CommonState>
   implements ManyStorable<ENTITY, ID, META> {
   private readonly entityMap: Map<ID, ENTITY>;
   private readonly entityConfigMap: Map<ID, EntityConfig>;

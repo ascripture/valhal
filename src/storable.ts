@@ -9,6 +9,10 @@ export interface StorableConstructor<STATE, KEY = string, META = any> {
   new (config: Config): ManyStorable<STATE, KEY, META>;
 }
 
+export interface CommonState {
+  isLoading: boolean;
+}
+
 export interface Storable<STATE> {
   config: Config;
   asObservable(): Observable<STATE>;
@@ -18,7 +22,7 @@ export interface Storable<STATE> {
   reset(): void;
 }
 
-export interface ManyStorable<STATE, KEY = string, META = void>
+export interface ManyStorable<STATE, KEY = string, META = CommonState>
   extends Storable<META> {
   add(state: Partial<STATE>): void;
   asEntityObservable(): Observable<StorableData<KEY, STATE>>;
