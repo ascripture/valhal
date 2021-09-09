@@ -83,6 +83,10 @@ export class EntityStore<ENTITY, ID = any, META = CommonState>
     return this.metadata;
   }
 
+  has(id: ID) {
+    return !!this.getBy(id);
+  }
+
   remove(id: ID) {
     if (!this.entityMap.has(id)) {
       throw new Error('Entity does not exist.');
@@ -113,6 +117,20 @@ export class EntityStore<ENTITY, ID = any, META = CommonState>
 
     this.metadata = { ...this.metadata, ...state } as META;
     this.metaSubject.next(this.metadata);
+  }
+
+  upsert(state: Partial<ENTITY>) {
+    if (!state) {
+      throw new Error(`Entity is undefined or null.`);
+    }
+
+    const id = this.getId(state);
+
+    if (this.has(id)) {
+      this.updateBy(state);
+    } else {
+      this.add(state);
+    }
   }
 
   updateBy(state: Partial<ENTITY>) {
