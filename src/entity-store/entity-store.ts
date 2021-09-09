@@ -93,13 +93,25 @@ export class EntityStore<ENTITY, ID = any, META = CommonState>
     }
 
     this.entityMap.delete(id);
+
+    if (this.entityConfigMap.has(id)) {
+      clearTimeout(this.entityConfigMap.get(id)?.cacheTimeoutId);
+    }
+
     this.entityConfigMap.delete(id);
 
     this.next();
   }
 
   reset() {
+    for (const config of Array.from(this.entityConfigMap.values())) {
+      if (config.cacheTimeoutId) {
+        clearTimeout(config.cacheTimeoutId);
+      }
+    }
+
     this.entityMap.clear();
+    this.entityConfigMap.clear();
     this.metadata = undefined;
     this._reset();
     this.metaReset();
