@@ -13,7 +13,7 @@ export interface CommonState {
   isLoading: boolean;
 }
 
-export interface Storable<STATE> {
+export interface Storable<STATE = CommonState> {
   config: Config;
   asObservable(): Observable<STATE>;
   get(): STATE | undefined;

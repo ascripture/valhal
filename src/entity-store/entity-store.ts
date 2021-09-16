@@ -197,7 +197,7 @@ export class EntityStore<ENTITY, ID = any, META = CommonState>
       this.remove(id);
     };
     const timeoutId = config?.cacheMS
-      ? setTimeout(timerHandler, this.config.cacheMS)
+      ? setTimeout(timerHandler, config?.cacheMS)
       : undefined;
 
     this.entityConfigMap.set(id, {
