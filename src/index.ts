@@ -1,4 +1,5 @@
 export * from './create-store';
+export * from './common-state';
 export * from './store';
 export * from './entity-store';
 export * from './config';

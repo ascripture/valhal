@@ -1,4 +1,6 @@
-export interface EntityUIState<ENTITY, UI = any> {
-  entity?: ENTITY;
-  ui?: UI;
+import { CommonState } from '../common-state';
+
+export interface EntityUIState<ENTITY, UI = CommonState> {
+  entity?: Partial<ENTITY>;
+  ui?: Partial<UI>;
 }

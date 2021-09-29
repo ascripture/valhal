@@ -1,4 +1,6 @@
 import { Observable } from 'rxjs';
+import { CommonEntityUI } from '.';
+import { CommonState } from './common-state';
 import { Config } from './config';
 
 export interface StorableData<KEY, STATE> {
@@ -7,10 +9,6 @@ export interface StorableData<KEY, STATE> {
 
 export interface StorableConstructor<STATE, KEY = string, META = any> {
   new (config: Config): ManyStorable<STATE, KEY, META>;
-}
-
-export interface CommonState {
-  isLoading: boolean;
 }
 
 export interface Storable<STATE = CommonState> {
@@ -29,7 +27,21 @@ export interface ManyStorable<STATE, KEY = string, META = CommonState>
   getAll(): StorableData<KEY, STATE>;
   getBy(id?: KEY): STATE | undefined;
   has(id: KEY): boolean;
-  updateBy(state: Partial<STATE>): void;
-  upsert(state: Partial<STATE>): void;
+  updateBy(
+    state: Partial<STATE>,
+    options?: {
+      mergeDeep: boolean;
+    }
+  ): void;
+  upsert(
+    state: Partial<STATE>,
+    options?: {
+      mergeDeep: boolean;
+    }
+  ): void;
   remove(id?: KEY): void;
+}
+
+export interface ManyStorableWithUI<STATE, KEY = string, UI = CommonEntityUI<KEY>, META = CommonState> extends ManyStorable<STATE, KEY, META> {
+  getUIStore(): ManyStorable<UI, KEY, META>;
 }

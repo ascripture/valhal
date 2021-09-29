@@ -1,7 +1,9 @@
 import { Observable, ReplaySubject, Subject } from 'rxjs';
-import { getConfig, nestedPathValue, resettable } from '../util';
-import { ManyStorable, StorableData, CommonState } from '../storable';
+import { getConfig, mergeDeep, nestedPathValue, resettable } from '../util';
+import { StorableData } from '../storable';
 import { Config, defaultConfig } from '../config';
+import { CommonState } from '../common-state';
+import { CommonEntityUI, ManyStorable, ManyStorableWithUI } from '..';
 
 export interface EntityStoreData<ENTITY, ID = any>
   extends StorableData<ID, ENTITY> {
@@ -13,8 +15,12 @@ interface EntityConfig {
   cacheTimeoutId?: number;
 }
 
-export class EntityStore<ENTITY, ID = any, META = CommonState>
-  implements ManyStorable<ENTITY, ID, META> {
+export class EntityStore<
+  ENTITY extends object,
+  ID = any,
+  META = CommonState,
+  UI extends object = CommonEntityUI<ID>
+> implements ManyStorableWithUI<ENTITY, ID, UI, META> {
   private readonly entityMap: Map<ID, ENTITY>;
   private readonly entityConfigMap: Map<ID, EntityConfig>;
   private readonly subject: Subject<EntityStoreData<ENTITY>>;
@@ -25,6 +31,8 @@ export class EntityStore<ENTITY, ID = any, META = CommonState>
   private readonly metaSubject: Subject<META>;
   private readonly metaReset: () => void;
   private readonly metaObservable: Observable<META>;
+
+  private uiStore: EntityStore<UI, ID, META> | undefined;
 
   constructor(readonly config: Config = defaultConfig) {
     this.entityMap = new Map();
@@ -83,6 +91,15 @@ export class EntityStore<ENTITY, ID = any, META = CommonState>
     return this.metadata;
   }
 
+  getUIStore(): ManyStorable<UI, ID, META> {
+    if (!this.uiStore) {
+      const config = getConfig(this);
+      this.uiStore = new EntityStore(config);
+    }
+
+    return this.uiStore;
+  }
+
   has(id: ID) {
     return !!this.getBy(id);
   }
@@ -131,7 +148,14 @@ export class EntityStore<ENTITY, ID = any, META = CommonState>
     this.metaSubject.next(this.metadata);
   }
 
-  upsert(state: Partial<ENTITY>) {
+  upsert(
+    state: Partial<ENTITY>,
+    options: {
+      mergeDeep: boolean;
+    } = {
+      mergeDeep: false,
+    }
+  ) {
     if (!state) {
       throw new Error(`Entity is undefined or null.`);
     }
@@ -139,13 +163,20 @@ export class EntityStore<ENTITY, ID = any, META = CommonState>
     const id = this.getId(state);
 
     if (this.has(id)) {
-      this.updateBy(state);
+      this.updateBy(state, options);
     } else {
       this.add(state);
     }
   }
 
-  updateBy(state: Partial<ENTITY>) {
+  updateBy(
+    state: Partial<ENTITY>,
+    options: {
+      mergeDeep: boolean;
+    } = {
+      mergeDeep: false,
+    }
+  ) {
     if (!state) {
       throw new Error(`Entity is undefined or null.`);
     }
@@ -157,7 +188,15 @@ export class EntityStore<ENTITY, ID = any, META = CommonState>
     }
 
     const current = this.entityMap.get(id);
-    const entity = { ...current, ...state } as ENTITY;
+    let entity = { ...current, ...state } as ENTITY;
+
+    if (options.mergeDeep) {
+      entity = mergeDeep(
+        {} as ENTITY,
+        current as Partial<ENTITY>,
+        state
+      ) as ENTITY;
+    }
 
     this.setEntity(id, entity);
     this.next();
