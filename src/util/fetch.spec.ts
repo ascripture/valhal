@@ -227,7 +227,7 @@ describe('fetch', () => {
     }
 
     const store = new EntityStore<STATE>({
-      cacheMS: 500,
+      cacheMS: 5000,
       idPath: ['id'],
     });
 
