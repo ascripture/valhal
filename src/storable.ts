@@ -42,6 +42,11 @@ export interface ManyStorable<STATE, KEY = string, META = CommonState>
   remove(id?: KEY): void;
 }
 
-export interface ManyStorableWithUI<STATE, KEY = string, UI = CommonEntityUI<KEY>, META = CommonState> extends ManyStorable<STATE, KEY, META> {
+export interface ManyStorableWithUI<
+  STATE,
+  KEY = string,
+  UI = CommonEntityUI<KEY>,
+  META = CommonState
+> extends ManyStorable<STATE, KEY, META> {
   getUIStore(): ManyStorable<UI, KEY, META>;
 }

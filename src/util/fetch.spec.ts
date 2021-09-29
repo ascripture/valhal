@@ -264,7 +264,7 @@ describe('fetch', () => {
         store,
         {
           useEntityLoading: true,
-          force: true
+          force: true,
         }
       ).subscribe(result => {
         expect(result).toEqual({
