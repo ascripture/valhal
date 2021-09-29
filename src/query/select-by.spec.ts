@@ -67,7 +67,7 @@ describe('selectBy', () => {
     setTimeout(() => {
       lastRun = true;
       expectations = ['test3'];
-      store.updateBy({
+      store.updateEntity({
         id: 'test2',
         value: 199,
       });

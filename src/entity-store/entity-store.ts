@@ -3,7 +3,7 @@ import { getConfig, mergeDeep, nestedPathValue, resettable } from '../util';
 import { StorableData } from '../storable';
 import { Config, defaultConfig } from '../config';
 import { CommonState } from '../common-state';
-import { CommonEntityUI, ManyStorable, ManyStorableWithUI } from '..';
+import { CommonEntityUI, ManyStorable, ManyStorableWithUI, Store } from '..';
 
 export interface EntityStoreData<ENTITY, ID = any>
   extends StorableData<ID, ENTITY> {
@@ -27,11 +27,7 @@ export class EntityStore<
   private readonly _reset: () => void;
   private readonly observable: Observable<EntityStoreData<ENTITY>>;
 
-  private metadata: META | undefined;
-  private readonly metaSubject: Subject<META>;
-  private readonly metaReset: () => void;
-  private readonly metaObservable: Observable<META>;
-
+  private metaStore: Store<META>;
   private uiStore: EntityStore<UI, ID, META> | undefined;
 
   constructor(readonly config: Config = defaultConfig) {
@@ -45,15 +41,7 @@ export class EntityStore<
     this.observable = observable;
     this._reset = reset;
 
-    const {
-      observable: metaObservable,
-      subject: metaSubject,
-      reset: metaReset,
-    } = resettable(() => new ReplaySubject<META>(1));
-
-    this.metaSubject = metaSubject;
-    this.metaObservable = metaObservable;
-    this.metaReset = metaReset;
+    this.metaStore = new Store(getConfig(this));
   }
 
   asEntityObservable() {
@@ -61,7 +49,7 @@ export class EntityStore<
   }
 
   asObservable() {
-    return this.metaObservable;
+    return this.metaStore.asObservable();
   }
 
   add(state: Partial<ENTITY>) {
@@ -77,18 +65,22 @@ export class EntityStore<
     this.next();
   }
 
+  cached() {
+    return this.metaStore.cached();
+  }
+
   getAll() {
     return {
       data: new Map(this.entityMap),
     };
   }
 
-  getBy(id: ID) {
+  getEntity(id: ID) {
     return this.entityMap.get(id);
   }
 
   get() {
-    return this.metadata;
+    return this.metaStore.get();
   }
 
   getUIStore(): ManyStorable<UI, ID, META> {
@@ -101,7 +93,7 @@ export class EntityStore<
   }
 
   has(id: ID) {
-    return !!this.getBy(id);
+    return !!this.getEntity(id);
   }
 
   remove(id: ID) {
@@ -129,14 +121,12 @@ export class EntityStore<
 
     this.entityMap.clear();
     this.entityConfigMap.clear();
-    this.metadata = undefined;
     this._reset();
-    this.metaReset();
+    this.metaStore.reset();
   }
 
   set(data: META) {
-    this.metadata = data;
-    this.metaSubject.next(this.metadata);
+    this.metaStore.set(data);
   }
 
   update(state: Partial<META>) {
@@ -144,8 +134,7 @@ export class EntityStore<
       throw new Error(`Meta State is undefined or null.`);
     }
 
-    this.metadata = { ...this.metadata, ...state } as META;
-    this.metaSubject.next(this.metadata);
+    this.metaStore.update(state);
   }
 
   upsert(
@@ -163,13 +152,13 @@ export class EntityStore<
     const id = this.getId(state);
 
     if (this.has(id)) {
-      this.updateBy(state, options);
+      this.updateEntity(state, options);
     } else {
       this.add(state);
     }
   }
 
-  updateBy(
+  updateEntity(
     state: Partial<ENTITY>,
     options: {
       mergeDeep: boolean;

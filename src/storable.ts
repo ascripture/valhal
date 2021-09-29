@@ -14,6 +14,7 @@ export interface StorableConstructor<STATE, KEY = string, META = any> {
 export interface Storable<STATE = CommonState> {
   config: Config;
   asObservable(): Observable<STATE>;
+  cached(): boolean;
   get(): STATE | undefined;
   set(state: STATE): void;
   update(state: Partial<STATE>): void;
@@ -25,9 +26,9 @@ export interface ManyStorable<STATE, KEY = string, META = CommonState>
   add(state: Partial<STATE>): void;
   asEntityObservable(): Observable<StorableData<KEY, STATE>>;
   getAll(): StorableData<KEY, STATE>;
-  getBy(id?: KEY): STATE | undefined;
+  getEntity(id?: KEY): STATE | undefined;
   has(id: KEY): boolean;
-  updateBy(
+  updateEntity(
     state: Partial<STATE>,
     options?: {
       mergeDeep: boolean;

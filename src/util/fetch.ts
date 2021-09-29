@@ -32,7 +32,7 @@ export function fetch<
   }
 ) {
   if (store.has(id) && !options?.force) {
-    return of(store.getBy(id));
+    return of(store.getEntity(id));
   }
 
   if (options.useStoreLoading) {

@@ -19,7 +19,7 @@ describe('fetch', () => {
         value: 500,
       });
 
-      const stored = store.getBy('x1');
+      const stored = store.getEntity('x1');
       expect(stored).toEqual({
         id: 'x1',
         value: 500,
@@ -49,7 +49,7 @@ describe('fetch', () => {
         value: 250,
       });
 
-      const stored = store.getBy('x1');
+      const stored = store.getEntity('x1');
       expect(stored).toEqual({
         id: 'x1',
         value: 250,
@@ -79,7 +79,7 @@ describe('fetch', () => {
         value: 500,
       });
 
-      const stored = store.getBy('x2');
+      const stored = store.getEntity('x2');
       expect(stored).toEqual({
         id: 'x2',
         value: 500,
@@ -111,7 +111,7 @@ describe('fetch', () => {
             value: 500,
           });
 
-          const stored = store.getBy('x1');
+          const stored = store.getEntity('x1');
           expect(stored).toEqual({
             id: 'x1',
             value: 500,
@@ -153,7 +153,7 @@ describe('fetch', () => {
         value: 500,
       });
 
-      const stored = store.getBy('x1');
+      const stored = store.getEntity('x1');
       expect(stored).toEqual({
         id: 'x1',
         value: 500,
@@ -205,7 +205,7 @@ describe('fetch', () => {
           value: 500,
         });
 
-        const stored = store.getBy('x1');
+        const stored = store.getEntity('x1');
         expect(stored).toEqual({
           id: 'x1',
           value: 500,
@@ -272,7 +272,7 @@ describe('fetch', () => {
           value: 500,
         });
 
-        const stored = store.getBy('x1');
+        const stored = store.getEntity('x1');
         expect(stored).toEqual({
           id: 'x1',
           value: 500,

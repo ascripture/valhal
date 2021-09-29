@@ -23,6 +23,10 @@ export class Store<STATE> implements Storable<STATE> {
     return this.observable;
   }
 
+  cached() {
+    return !!this.get();
+  }
+
   set(state: STATE) {
     this.setState(state);
   }
