@@ -66,13 +66,17 @@ export class EntityStore<
   }
 
   cached() {
-    return this.metaStore.cached();
+    return this.metaStore.cached() || this.entityConfigMap.size > 0;
   }
 
   getAll() {
     return {
       data: new Map(this.entityMap),
     };
+  }
+
+  getAllArray() {
+    return Array.from(this.getAll()?.data.values());
   }
 
   getEntity(id: ID) {

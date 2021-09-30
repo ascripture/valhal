@@ -26,6 +26,7 @@ export interface ManyStorable<STATE, KEY = string, META = CommonState>
   add(state: Partial<STATE>): void;
   asEntityObservable(): Observable<StorableData<KEY, STATE>>;
   getAll(): StorableData<KEY, STATE>;
+  getAllArray(): STATE[];
   getEntity(id?: KEY): STATE | undefined;
   has(id: KEY): boolean;
   updateEntity(
