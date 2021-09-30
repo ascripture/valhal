@@ -1,6 +1,7 @@
 import { Observable, of } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
-import { getConfig, setNestedKey } from '.';
+import { getConfig } from '../util/get-config';
+import { setNestedKey } from '../util/set-nested-key';
 import {
   CommonEntityUI,
   CommonState,

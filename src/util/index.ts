@@ -1,5 +1,3 @@
-export * from './fetch';
-export * from './fetch-multiple';
 export * from './get-config';
 export * from './nested-path';
 export * from './map-store-data';
