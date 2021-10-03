@@ -5,7 +5,7 @@ import { isObject } from './is-object';
  * @param target
  * @param ...sources
  */
-export function mergeDeep<T extends object>(target: T, ...sources: T[]): T {
+export function mergeDeep<T>(target: T, ...sources: T[]): T {
   if (!sources.length) {
     return target;
   }

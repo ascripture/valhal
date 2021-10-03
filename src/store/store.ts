@@ -5,14 +5,14 @@ import { Storable } from '..';
 
 export class Store<STATE> implements Storable<STATE> {
   private state: STATE | undefined;
-  private readonly subject: Subject<STATE>;
+  private readonly subject: Subject<STATE | undefined>;
   private readonly _reset: () => void;
-  private readonly observable: Observable<STATE>;
+  private readonly observable: Observable<STATE | undefined>;
   private cacheTimeoutId: number | undefined;
 
   constructor(readonly config: Config = defaultConfig) {
     const { observable, subject, reset } = resettable(
-      () => new ReplaySubject<STATE>(1)
+      () => new ReplaySubject<STATE | undefined>(1)
     );
     this.subject = subject;
     this.observable = observable;
@@ -20,7 +20,7 @@ export class Store<STATE> implements Storable<STATE> {
   }
 
   asObservable() {
-    return this.observable;
+    return this.observable as Observable<STATE>;
   }
 
   cached() {
@@ -64,9 +64,6 @@ export class Store<STATE> implements Storable<STATE> {
     this.state = { ...state };
 
     const timerHandler: TimerHandler = () => {
-      if (process.env.NODE_ENV !== 'production') {
-        console.info(`Remove state as cache timeout was triggered.`);
-      }
       this.reset();
     };
 

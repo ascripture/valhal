@@ -21,7 +21,7 @@ export function resettable<T>(
       subscription.unsubscribe();
       destination = factory();
       subscription = source.subscribe(destination);
-      resetter.next();
+      resetter.next({});
     },
     subject: source,
   };

@@ -3,7 +3,9 @@ import { getConfig, mergeDeep, nestedPathValue, resettable } from '../util';
 import { StorableData } from '../storable';
 import { Config, defaultConfig } from '../config';
 import { CommonState } from '../common-state';
-import { CommonEntityUI, ManyStorable, ManyStorableWithUI, Store } from '..';
+import { CommonEntityUI } from '../common-state';
+import { ManyStorableWithUI, ManyStorable } from '../storable';
+import { Store } from '../store';
 
 export interface EntityStoreData<ENTITY, ID = any>
   extends StorableData<ID, ENTITY> {
@@ -16,10 +18,10 @@ interface EntityConfig {
 }
 
 export class EntityStore<
-  ENTITY extends object,
+  ENTITY,
   ID = any,
   META = CommonState,
-  UI extends object = CommonEntityUI<ID>
+  UI = CommonEntityUI<ID>
 > implements ManyStorableWithUI<ENTITY, ID, UI, META> {
   private readonly entityMap: Map<ID, ENTITY>;
   private readonly entityConfigMap: Map<ID, EntityConfig>;
@@ -221,11 +223,6 @@ export class EntityStore<
 
     const config = getConfig(this);
     const timerHandler: TimerHandler = () => {
-      if (process.env.NODE_ENV !== 'production') {
-        console.info(
-          `Remove cached entity ${id} as cache timeout was triggered.`
-        );
-      }
       this.remove(id);
     };
     const timeoutId = config?.cacheMS

@@ -8,7 +8,7 @@ export function nestedPathValue<T>(
     return obj as T;
   }
 
-  if (obj.hasOwnProperty(current?.value)) {
+  if (Object.prototype.hasOwnProperty.call(obj, current?.value)) {
     return nestedPathValue(obj[current?.value], paths);
   }
 
