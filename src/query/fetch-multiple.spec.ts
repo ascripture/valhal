@@ -72,6 +72,7 @@ describe('fetchMultiple', () => {
         value: 250,
       });
 
+      store.reset();
       done();
     });
   });
@@ -113,6 +114,7 @@ describe('fetchMultiple', () => {
       });
 
       expect(store.get()?.isLoading).toBeFalsy();
+      store.reset();
       done();
     });
   });

@@ -133,6 +133,7 @@ describe('EntityStore', () => {
         .pipe(take(1))
         .subscribe(result => {
           expect(result).toBeUndefined();
+          store.reset();
           done();
         });
     }, 550);
