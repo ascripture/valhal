@@ -67,6 +67,10 @@ export class Store<STATE> implements Storable<STATE> {
       this.reset();
     };
 
+    if (this.cacheTimeoutId) {
+      clearTimeout(this.cacheTimeoutId);
+    }
+
     this.cacheTimeoutId = config?.cacheMS
       ? setTimeout(timerHandler, this.config.cacheMS)
       : undefined;

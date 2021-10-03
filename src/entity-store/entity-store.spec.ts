@@ -3,11 +3,11 @@ import { EntityStore } from './entity-store';
 import { select } from '../query';
 
 describe('EntityStore', () => {
-  it('adds entities to the store', done => {
+  it('adds entities to the store', (done) => {
     const store = new EntityStore<{ id: string; value: number }>();
 
     let run = 0;
-    select('x', store).subscribe(data => {
+    select('x', store).subscribe((data) => {
       expect(data?.value).toEqual(100);
       run++;
     });
@@ -22,13 +22,13 @@ describe('EntityStore', () => {
       value: 200,
     });
 
-    select('y', store).subscribe(data => {
+    select('y', store).subscribe((data) => {
       expect(data?.value).toEqual(200);
     });
 
     let value = 0;
     let called = 0;
-    store.asEntityObservable().subscribe(store => {
+    store.asEntityObservable().subscribe((store) => {
       value = Array.from(store.data.values()).reduce(
         (acc, next) => acc + (next?.value ?? 0),
         0
@@ -44,7 +44,7 @@ describe('EntityStore', () => {
     });
   });
 
-  it('removes entities from the store', done => {
+  it('removes entities from the store', (done) => {
     const store = new EntityStore<{ id: string; value: number }>();
 
     store.add({
@@ -64,7 +64,7 @@ describe('EntityStore', () => {
 
     select('y', store)
       .pipe(take(1))
-      .subscribe(result => {
+      .subscribe((result) => {
         expect(result?.value).toEqual(200);
       });
 
@@ -77,13 +77,13 @@ describe('EntityStore', () => {
     expect(entities1.data.get('y')?.value).toEqual(200);
     expect(entities2.data.get('y')).toBeUndefined();
 
-    select('y', store).subscribe(result => {
+    select('y', store).subscribe((result) => {
       expect(result).toBeUndefined();
       done();
     });
   });
 
-  it('caches entities in the store for 500ms', done => {
+  it('caches entities in the store for 500ms', (done) => {
     const store = new EntityStore<{ id: string; value: number }>({
       cacheMS: 500,
       idPath: ['id'],
@@ -107,7 +107,7 @@ describe('EntityStore', () => {
     setTimeout(() => {
       select('x', store)
         .pipe(take(1))
-        .subscribe(result => {
+        .subscribe((result) => {
           expect(result?.value).toEqual(100);
         });
     }, 200);
@@ -115,7 +115,7 @@ describe('EntityStore', () => {
     setTimeout(() => {
       select('y', store)
         .pipe(take(1))
-        .subscribe(result => {
+        .subscribe((result) => {
           expect(result?.value).toEqual(200);
         });
     }, 400);
@@ -123,7 +123,7 @@ describe('EntityStore', () => {
     setTimeout(() => {
       select('z', store)
         .pipe(take(1))
-        .subscribe(result => {
+        .subscribe((result) => {
           expect(result?.value).toEqual(300);
         });
     }, 300);
@@ -131,7 +131,7 @@ describe('EntityStore', () => {
     setTimeout(() => {
       select('y', store)
         .pipe(take(1))
-        .subscribe(result => {
+        .subscribe((result) => {
           expect(result).toBeUndefined();
           store.reset();
           done();

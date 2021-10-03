@@ -229,6 +229,11 @@ export class EntityStore<
       ? setTimeout(timerHandler, config?.cacheMS)
       : undefined;
 
+    const existingEntityConfigMap = this.entityConfigMap.get(id);
+    if (existingEntityConfigMap?.cacheTimeoutId) {
+      clearTimeout(existingEntityConfigMap.cacheTimeoutId);
+    }
+
     this.entityConfigMap.set(id, {
       cacheTimeoutId: timeoutId,
       createdAt: Date.now(),
