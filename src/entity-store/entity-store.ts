@@ -225,14 +225,16 @@ export class EntityStore<
     const timerHandler: TimerHandler = () => {
       this.remove(id);
     };
-    const timeoutId = config?.cacheMS
-      ? setTimeout(timerHandler, config?.cacheMS)
-      : undefined;
 
     const existingEntityConfigMap = this.entityConfigMap.get(id);
     if (existingEntityConfigMap?.cacheTimeoutId) {
       clearTimeout(existingEntityConfigMap.cacheTimeoutId);
     }
+
+    const timeoutId = config?.cacheMS
+      ? setTimeout(timerHandler, config?.cacheMS)
+      : undefined;
+
 
     this.entityConfigMap.set(id, {
       cacheTimeoutId: timeoutId,
