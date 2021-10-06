@@ -2,8 +2,8 @@
   "version": "0.6.3",
   "license": "MIT",
   "main": "dist/valhal.js",
-"module": "dist/valhal.mjs",
-"typings": "dist/valhal.d.ts",
+  "module": "dist/valhal.mjs",
+  "typings": "dist/valhal.d.ts",
   "files": [
     "dist",
     "src"

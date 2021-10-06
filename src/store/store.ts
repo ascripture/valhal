@@ -2,6 +2,7 @@ import { Observable, ReplaySubject, Subject } from 'rxjs';
 import { getConfig, resettable } from '../util';
 import { Config, defaultConfig } from '../config';
 import { Storable } from '..';
+import { unnamedStores } from '../stores';
 
 export class Store<STATE> implements Storable<STATE> {
   private state: STATE | undefined;
@@ -17,6 +18,8 @@ export class Store<STATE> implements Storable<STATE> {
     this.subject = subject;
     this.observable = observable;
     this._reset = reset;
+
+    unnamedStores.push(new WeakRef<Storable<STATE>>(this));
   }
 
   asObservable() {

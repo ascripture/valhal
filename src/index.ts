@@ -6,3 +6,4 @@ export * from './config';
 export * from './storable';
 export * from './query';
 export * from './store-config';
+export * from './reset-stores';

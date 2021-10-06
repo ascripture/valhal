@@ -6,6 +6,8 @@ import { CommonState } from '../common-state';
 import { CommonEntityUI } from '../common-state';
 import { ManyStorableWithUI, ManyStorable } from '../storable';
 import { Store } from '../store';
+import { unnamedStores } from '../stores';
+import { Storable } from '../storable';
 
 export interface EntityStoreData<ENTITY, ID = any>
   extends StorableData<ID, ENTITY> {
@@ -22,7 +24,8 @@ export class EntityStore<
   ID = any,
   META = CommonState,
   UI = CommonEntityUI<ID>
-> implements ManyStorableWithUI<ENTITY, ID, UI, META> {
+> implements ManyStorableWithUI<ENTITY, ID, UI, META>
+{
   private readonly entityMap: Map<ID, ENTITY>;
   private readonly entityConfigMap: Map<ID, EntityConfig>;
   private readonly subject: Subject<EntityStoreData<ENTITY>>;
@@ -44,6 +47,8 @@ export class EntityStore<
     this._reset = reset;
 
     this.metaStore = new Store(getConfig(this));
+
+    unnamedStores.push(new WeakRef<Storable<META>>(this));
   }
 
   asEntityObservable() {
@@ -234,7 +239,6 @@ export class EntityStore<
     const timeoutId = config?.cacheMS
       ? setTimeout(timerHandler, config?.cacheMS)
       : undefined;
-
 
     this.entityConfigMap.set(id, {
       cacheTimeoutId: timeoutId,
