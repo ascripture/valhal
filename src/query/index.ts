@@ -6,3 +6,5 @@ export * from './select-by';
 
 export * from './select-ui';
 export * from './select-all';
+
+export * from './simple-fetch';
