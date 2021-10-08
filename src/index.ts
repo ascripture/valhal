@@ -2,7 +2,7 @@ export * from './create-store';
 export * from './common-state';
 export * from './config';
 export * from './entity-store';
-export * from './lazy';
+export * from './silent';
 export * from './query';
 export * from './storable';
 export * from './store';
