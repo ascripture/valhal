@@ -1,5 +1,5 @@
 {
-  "version": "0.7.2",
+  "version": "0.7.3",
   "license": "MIT",
   "main": "dist/valhal.js",
   "module": "dist/valhal.mjs",
@@ -19,7 +19,7 @@
     "analyze": "size-limit --why"
   },
   "peerDependencies": {
-    "rxjs": "*"
+    "rxjs": "~6.6.0"
   },
   "prettier": {
     "printWidth": 80,
@@ -51,7 +51,7 @@
     "rollup": "^2.58.0",
     "rollup-plugin-dts": "^4.0.0",
     "rollup-plugin-esbuild": "^4.5.0",
-    "rxjs": "*",
+    "rxjs": "~6.6.0",
     "size-limit": "^5.0.3",
     "ts-jest": "^27.0.5",
     "tslib": "^2.3.1",

@@ -1,4 +1,5 @@
-import { delay, of, tap } from 'rxjs';
+import { of } from 'rxjs';
+import { delay, tap } from 'rxjs/operators';
 import { silent } from './silent';
 
 describe('silent', () => {
