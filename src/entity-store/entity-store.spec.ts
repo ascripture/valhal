@@ -3,15 +3,38 @@ import { EntityStore } from './entity-store';
 import { select } from '../query';
 
 describe('EntityStore', () => {
-  it('adds entities to the store', (done) => {
+  it('starts with an empty store', (done) => {
     const store = new EntityStore<{ id: string; value: number }>();
 
     let run = 0;
     select('x', store).subscribe((data) => {
-      expect(data?.value).toEqual(100);
+      expect(data).toBeUndefined();
       run++;
     });
 
+    let called = 0;
+    store.asEntityObservable().subscribe(() => {
+      called++;
+    });
+
+    setTimeout(() => {
+      expect(called).toEqual(1);
+      expect(run).toEqual(1);
+      done();
+    });
+  });
+
+  it('adds entities to the store', (done) => {
+    const store = new EntityStore<{ id: string; value: number }>();
+
+    let run = 0;
+    let expectX: number | undefined = undefined;
+    select('x', store).subscribe((data) => {
+      expect(data?.value).toEqual(expectX);
+      run++;
+    });
+
+    expectX = 100;
     store.add({
       id: 'x',
       value: 100,
@@ -39,7 +62,7 @@ describe('EntityStore', () => {
     setTimeout(() => {
       expect(value).toEqual(300);
       expect(called).toEqual(1);
-      expect(run).toEqual(1);
+      expect(run).toEqual(2);
       done();
     });
   });

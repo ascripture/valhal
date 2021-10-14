@@ -49,6 +49,8 @@ export class EntityStore<
     this.metaStore = new Store(getConfig(this));
 
     unnamedStores.push(new WeakRef<Storable<META>>(this));
+
+    this.next();
   }
 
   asEntityObservable() {

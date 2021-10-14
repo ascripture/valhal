@@ -226,7 +226,7 @@ describe('fetch', () => {
         });
 
         setTimeout(() => {
-          expect(spy).toHaveBeenCalledTimes(2);
+          expect(spy).toHaveBeenCalledTimes(3);
 
           store.reset();
           done();
