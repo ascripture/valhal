@@ -8,6 +8,7 @@ import { ManyStorableWithUI, ManyStorable } from '../storable';
 import { Store } from '../store';
 import { unnamedStores } from '../stores';
 import { Storable } from '../storable';
+import { shareReplay } from 'rxjs/operators';
 
 export interface EntityStoreData<ENTITY, ID = any>
   extends StorableData<ID, ENTITY> {
@@ -43,7 +44,7 @@ export class EntityStore<
     );
 
     this.subject = subject;
-    this.observable = observable;
+    this.observable = observable.pipe(shareReplay(1));
     this._reset = reset;
 
     this.metaStore = new Store(getConfig(this));
@@ -136,6 +137,8 @@ export class EntityStore<
     this.entityConfigMap.clear();
     this._reset();
     this.metaStore.reset();
+
+    this.next();
   }
 
   set(data: META) {

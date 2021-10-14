@@ -3,6 +3,15 @@ import { EntityStore } from './entity-store';
 import { select } from '../query';
 
 describe('EntityStore', () => {
+  it('asEntityObservable works on empty stores', (done) => {
+    const store = new EntityStore<{ id: string; value: number }>();
+
+    store.asEntityObservable().subscribe((x) => {
+      expect(x.data.size).toEqual(0);
+      done();
+    });
+  });
+
   it('starts with an empty store', (done) => {
     const store = new EntityStore<{ id: string; value: number }>();
 

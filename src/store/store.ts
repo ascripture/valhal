@@ -3,6 +3,7 @@ import { getConfig, resettable } from '../util';
 import { Config, defaultConfig } from '../config';
 import { Storable } from '..';
 import { unnamedStores } from '../stores';
+import { shareReplay } from 'rxjs/operators';
 
 export class Store<STATE> implements Storable<STATE> {
   private state: STATE | undefined;
@@ -16,7 +17,7 @@ export class Store<STATE> implements Storable<STATE> {
       () => new ReplaySubject<STATE | undefined>(1)
     );
     this.subject = subject;
-    this.observable = observable;
+    this.observable = observable.pipe(shareReplay(1));
     this._reset = reset;
 
     unnamedStores.push(new WeakRef<Storable<STATE>>(this));

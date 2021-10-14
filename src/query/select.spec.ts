@@ -2,6 +2,32 @@ import { EntityStore } from '../entity-store';
 import { select } from './select';
 
 describe('select', () => {
+  it('selects undefined in an empty store', (done) => {
+    const store = new EntityStore<{
+      id: string;
+      value: number;
+    }>();
+
+    select('test2', store).subscribe((result) => {
+      expect(result?.value).toBeUndefined();
+      done();
+    });
+  });
+
+  it('selects the initial value in an empty store', (done) => {
+    const store = new EntityStore<{
+      id: string;
+      value: number;
+    }>();
+
+    select('test2', store, {
+      initialValue: { id: 'test2', value: 50 },
+    }).subscribe((result) => {
+      expect(result?.value).toEqual(50);
+      done();
+    });
+  });
+
   it('selects an entity', (done) => {
     const store = new EntityStore<{
       id: string;
