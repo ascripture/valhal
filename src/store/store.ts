@@ -20,6 +20,8 @@ export class Store<STATE> implements Storable<STATE> {
     this._reset = reset;
 
     unnamedStores.push(new WeakRef<Storable<STATE>>(this));
+
+    this.next();
   }
 
   asObservable() {
