@@ -78,7 +78,7 @@ export class Store<STATE> implements Storable<STATE> {
     }
 
     this.cacheTimeoutId = config?.cacheMS
-      ? setTimeout(timerHandler, this.config.cacheMS)
+      ? setTimeout(timerHandler, config.cacheMS)
       : undefined;
 
     this.next();

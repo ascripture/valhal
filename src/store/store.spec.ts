@@ -1,6 +1,27 @@
 import { Store } from '.';
 
 describe('Store', () => {
+  it('timeout works as expected', (done) => {
+    const store = new Store<{ value: number }>({ cacheMS: 1500 });
+
+    store.set({
+      value: 100,
+    });
+
+    setTimeout(() => {
+      expect(store.get()?.value).toEqual(100);
+    }, 500);
+
+    setTimeout(() => {
+      expect(store.get()?.value).toEqual(100);
+    }, 1000);
+
+    setTimeout(() => {
+      expect(store.get()?.value).toBeUndefined();
+      done();
+    }, 1600);
+  });
+
   it('sets the state of the store', (done) => {
     const store = new Store<{ value: number }>();
 

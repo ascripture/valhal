@@ -3,7 +3,7 @@ import { getConfig } from './util';
 
 describe('StoreConfig on EntityStore', () => {
   @StoreConfig({
-    cacheMS: 5000,
+    cacheMS: 1500,
     idPath: ['testId'],
   })
   class TestStore extends EntityStore<{
@@ -16,7 +16,7 @@ describe('StoreConfig on EntityStore', () => {
 
     const config = getConfig(test);
 
-    expect(config.cacheMS).toEqual(5000);
+    expect(config.cacheMS).toEqual(1500);
   });
 
   it('uses the correct id path', () => {
@@ -25,6 +25,28 @@ describe('StoreConfig on EntityStore', () => {
     const config = getConfig(test);
 
     expect(config.idPath).toEqual(['testId']);
+  });
+
+  it('timeout works as expected with store config', (done) => {
+    const store = new TestStore();
+
+    store.add({
+      testId: 'x',
+      value: 100,
+    });
+
+    setTimeout(() => {
+      expect(store.getEntity('x')?.value).toEqual(100);
+    }, 500);
+
+    setTimeout(() => {
+      expect(store.getEntity('x')?.value).toEqual(100);
+    }, 1000);
+
+    setTimeout(() => {
+      expect(store.getEntity('x')?.value).toBeUndefined();
+      done();
+    }, 1600);
   });
 });
 
@@ -54,7 +76,7 @@ describe('Default StoreConfig on EntityStore', () => {
 
 describe('StoreConfig on Store', () => {
   @StoreConfig({
-    cacheMS: 7000,
+    cacheMS: 1500,
     idPath: ['testId2'],
   })
   class TestStore extends Store<{
@@ -67,7 +89,7 @@ describe('StoreConfig on Store', () => {
 
     const config = getConfig(test);
 
-    expect(config.cacheMS).toEqual(7000);
+    expect(config.cacheMS).toEqual(1500);
   });
 
   it('uses the correct id path', () => {
@@ -76,5 +98,27 @@ describe('StoreConfig on Store', () => {
     const config = getConfig(test);
 
     expect(config.idPath).toEqual(['testId2']);
+  });
+
+  it('timeout works as expected with store config', (done) => {
+    const store = new TestStore();
+
+    store.set({
+      testId2: 'x',
+      value: 100,
+    });
+
+    setTimeout(() => {
+      expect(store.get()?.value).toEqual(100);
+    }, 500);
+
+    setTimeout(() => {
+      expect(store.get()?.value).toEqual(100);
+    }, 1000);
+
+    setTimeout(() => {
+      expect(store.get()?.value).toBeUndefined();
+      done();
+    }, 1600);
   });
 });
