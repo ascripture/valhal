@@ -22,11 +22,13 @@ export function fetch<
     | ManyStorableWithUI<STATE, ID, UI, META>,
   options: {
     force?: boolean;
+    createEmptyEntity?: boolean;
     useEntityLoading?: boolean;
     useStoreLoading?: boolean;
     mergeDeep?: boolean;
   } = {
     force: false,
+    createEmptyEntity: false,
     useEntityLoading: false,
     useStoreLoading: false,
     mergeDeep: false,
@@ -67,6 +69,21 @@ export function fetch<
     });
   }
 
+  if (options.createEmptyEntity) {
+    const empty = {} as Partial<STATE>;
+
+    const config = getConfig(store);
+    if (!config.idPath) {
+      throw new Error(
+        'idPath is undefined but entity loading requires idPaths'
+      );
+    }
+
+    setNestedKey(empty, config.idPath, id);
+
+    store.upsert(empty);
+  }
+
   const disableLoading = () => {
     if (options.useStoreLoading) {
       store.update({ isLoading: false } as Partial<META>);
@@ -102,9 +119,9 @@ export function fetch<
 
   return fetch(id).pipe(
     tap(disableLoading, disableLoading),
-    tap(result => {
+    tap((result) => {
       store.upsert(result, { mergeDeep: !!options?.mergeDeep });
     }),
-    map(x => x as STATE)
+    map((x) => x as STATE)
   ) as Observable<STATE>;
 }
