@@ -49,7 +49,7 @@ export class EntityStore<
       tap((state) => {
         if (getConfig(this).logState) {
           const name = this.constructor.name;
-          console.info(`${name} State: ${JSON.stringify(state.data)}`);
+          console.info(`${name} State: ${Array.from(state.data.values())}`);
         }
       })
     );
