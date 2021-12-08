@@ -58,6 +58,12 @@ describe('EntityStore', () => {
       expect(data?.value).toEqual(200);
     });
 
+    expectX = 800;
+    store.updateEntity({
+      id: 'x',
+      value: 800,
+    });
+
     let value = 0;
     let called = 0;
     store.asEntityObservable().subscribe((store) => {
@@ -69,9 +75,9 @@ describe('EntityStore', () => {
     });
 
     setTimeout(() => {
-      expect(value).toEqual(300);
+      expect(value).toEqual(1000);
       expect(called).toEqual(1);
-      expect(run).toEqual(2);
+      expect(run).toEqual(3);
       done();
     });
   });
