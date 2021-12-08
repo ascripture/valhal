@@ -42,12 +42,12 @@ export function fetchMultiple<
   };
 
   return fetch().pipe(
-    tap(disableLoading, disableLoading),
-    tap(result => {
+    tap((result) => {
       for (const state of result) {
         store.upsert(state, { mergeDeep: !!options?.mergeDeep });
       }
     }),
-    map(x => x as STATE[])
+    tap(disableLoading, disableLoading),
+    map((x) => x as STATE[])
   ) as Observable<STATE[]>;
 }

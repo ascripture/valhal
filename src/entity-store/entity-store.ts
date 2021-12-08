@@ -8,7 +8,7 @@ import { ManyStorableWithUI, ManyStorable } from '../storable';
 import { Store } from '../store';
 import { unnamedStores } from '../stores';
 import { Storable } from '../storable';
-import { shareReplay } from 'rxjs/operators';
+import { shareReplay, tap } from 'rxjs/operators';
 
 export interface EntityStoreData<ENTITY, ID = any>
   extends StorableData<ID, ENTITY> {
@@ -44,7 +44,15 @@ export class EntityStore<
     );
 
     this.subject = subject;
-    this.observable = observable.pipe(shareReplay(1));
+    this.observable = observable.pipe(
+      shareReplay(1),
+      tap((state) => {
+        if (getConfig(this).logState) {
+          const name = this.constructor.name;
+          console.info(`${name} State: ${JSON.stringify(state.data.values())}`);
+        }
+      })
+    );
     this._reset = reset;
 
     this.metaStore = new Store(getConfig(this));
