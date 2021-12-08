@@ -118,10 +118,10 @@ export function fetch<
   };
 
   return fetch(id).pipe(
-    tap(disableLoading, disableLoading),
     tap((result) => {
       store.upsert(result, { mergeDeep: !!options?.mergeDeep });
     }),
+    tap(disableLoading, disableLoading),
     map((x) => x as STATE)
   ) as Observable<STATE>;
 }
