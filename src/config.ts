@@ -1,7 +1,7 @@
 export interface Config {
   cacheMS?: number;
-  idPath?: string[];
   logState?: boolean;
+  idPath?: string[];
 }
 
 export const defaultConfig: Config = {

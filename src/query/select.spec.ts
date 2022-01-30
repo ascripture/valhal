@@ -55,6 +55,113 @@ describe('select', () => {
     });
   });
 
+  it('selects an entity multiple times', (done) => {
+    const store = new EntityStore<{
+      id: string;
+      value: number;
+    }>();
+
+    store.add({
+      id: 'test',
+      value: 100,
+    });
+
+    store.add({
+      id: 'test2',
+      value: 200,
+    });
+
+    let run = 0;
+    let expected = 200;
+    select('test2', store).subscribe((result) => {
+      expect(result?.value).toEqual(expected);
+      run++;
+    });
+
+    let run2 = 0;
+    select('test2', store).subscribe((result) => {
+      expect(result?.value).toEqual(expected);
+      run2++;
+    });
+
+    expected = 600;
+    store.updateEntity({
+      id: 'test2',
+      value: 600,
+    });
+
+    let run3 = 0;
+    select('test2', store).subscribe((result) => {
+      expect(result?.value).toEqual(expected);
+      run3++;
+    });
+
+    expected = 800;
+    store.updateEntity({
+      id: 'test2',
+      value: 800,
+    });
+
+    setTimeout(() => {
+      expect(run).toEqual(3);
+      expect(run2).toEqual(3);
+      expect(run3).toEqual(2);
+      done();
+    }, 200);
+  });
+
+  it('selects an entity even after resetting', (done) => {
+    const store = new EntityStore<{
+      id: string;
+      value: number;
+    }>();
+
+    store.add({
+      id: 'test',
+      value: 100,
+    });
+
+    store.add({
+      id: 'test2',
+      value: 200,
+    });
+
+    let run = 0;
+    let expected: number | undefined = 200;
+    select('test2', store).subscribe((result) => {
+      expect(result?.value).toEqual(expected);
+      run++;
+    });
+
+    let run2 = 0;
+    select('test2', store).subscribe((result) => {
+      expect(result?.value).toEqual(expected);
+      run2++;
+    });
+
+    expected = undefined;
+    store.reset();
+
+    expected = 600;
+    store.upsert({
+      id: 'test2',
+      value: 600,
+    });
+
+    let run3 = 0;
+    select('test2', store).subscribe((result) => {
+      expect(result?.value).toEqual(expected);
+      run3++;
+    });
+
+    setTimeout(() => {
+      expect(run).toEqual(3);
+      expect(run2).toEqual(3);
+      expect(run3).toEqual(1);
+      done();
+    }, 200);
+  });
+
   it('selects an entity and reacts to changes', (done) => {
     const store = new EntityStore<{
       id: string;

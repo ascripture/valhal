@@ -63,6 +63,11 @@ export class Store<STATE> implements Storable<STATE> {
 
   private next() {
     this.subject.next(this.state);
+
+    if (getConfig(this).logState) {
+      const name = this.constructor.name;
+      console.info(`${name} State: `, this.state);
+    }
   }
 
   private setState(state: STATE) {

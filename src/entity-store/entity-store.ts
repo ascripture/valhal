@@ -1,14 +1,14 @@
 import { Observable, ReplaySubject, Subject } from 'rxjs';
 import { getConfig, mergeDeep, nestedPathValue, resettable } from '../util';
 import { StorableData } from '../storable';
-import { Config, defaultConfig } from '../config';
+import { defaultConfig, Config } from '../config';
 import { CommonState } from '../common-state';
 import { CommonEntityUI } from '../common-state';
 import { ManyStorableWithUI, ManyStorable } from '../storable';
 import { Store } from '../store';
 import { unnamedStores } from '../stores';
 import { Storable } from '../storable';
-import { shareReplay, tap } from 'rxjs/operators';
+import { shareReplay } from 'rxjs/operators';
 
 export interface EntityStoreData<ENTITY, ID = any>
   extends StorableData<ID, ENTITY> {
@@ -44,15 +44,7 @@ export class EntityStore<
     );
 
     this.subject = subject;
-    this.observable = observable.pipe(
-      shareReplay(1),
-      tap((state) => {
-        if (getConfig(this).logState) {
-          const name = this.constructor.name;
-          console.info(`${name} State: `, Array.from(state.data.values()));
-        }
-      })
-    );
+    this.observable = observable.pipe(shareReplay(1));
     this._reset = reset;
 
     this.metaStore = new Store(getConfig(this));
@@ -223,7 +215,7 @@ export class EntityStore<
 
     const id = nestedPathValue<ID>(entity, config.idPath.values());
 
-    if (!id) {
+    if (id === undefined || id === null) {
       throw new Error(`Entity doesnt have an id.`);
     }
 
@@ -231,9 +223,16 @@ export class EntityStore<
   }
 
   private next() {
+    const state = new Map(this.entityMap);
+
     this.subject.next({
-      data: new Map(this.entityMap),
+      data: state,
     });
+
+    if (getConfig(this).logState) {
+      const name = this.constructor.name;
+      console.info(`${name} State: `, Array.from(state.values()));
+    }
   }
 
   private setEntity(id: ID, entity: ENTITY) {

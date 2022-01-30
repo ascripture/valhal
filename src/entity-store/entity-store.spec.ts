@@ -3,6 +3,55 @@ import { EntityStore } from './entity-store';
 import { select } from '../query';
 
 describe('EntityStore', () => {
+  it('logs the current state', (done) => {
+    const store = new EntityStore<{ id: string; value: number }>({
+      idPath: ['id'],
+      logState: true,
+    });
+
+    const spy = jest.spyOn(global.console, 'info');
+
+    store.add({
+      id: 'test',
+      value: 1,
+    });
+
+    expect(spy).toHaveBeenCalledWith('EntityStore State: ', [
+      {
+        id: 'test',
+        value: 1,
+      },
+    ]);
+
+    done();
+  });
+
+  it('works with 0 as an entity', () => {
+    const store = new EntityStore<{ id: number; value: number }>();
+
+    store.add({
+      id: 0,
+      value: 1,
+    });
+
+    const entity = store.getEntity(0);
+
+    expect(entity?.value).toEqual(1);
+  });
+
+  it('works with 0 string as an entity', () => {
+    const store = new EntityStore<{ id: string; value: number }>();
+
+    store.add({
+      id: '0',
+      value: 1,
+    });
+
+    const entity = store.getEntity('0');
+
+    expect(entity?.value).toEqual(1);
+  });
+
   it('asEntityObservable works on empty stores', (done) => {
     const store = new EntityStore<{ id: string; value: number }>();
 

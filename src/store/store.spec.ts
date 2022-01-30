@@ -1,6 +1,27 @@
 import { Store } from '.';
 
 describe('Store', () => {
+  it('logs the current state', (done) => {
+    const store = new Store<{ id: string; value: number }>({
+      idPath: ['id'],
+      logState: true,
+    });
+
+    const spy = jest.spyOn(global.console, 'info');
+
+    store.set({
+      id: 'test',
+      value: 1,
+    });
+
+    expect(spy).toHaveBeenCalledWith('Store State: ', {
+      id: 'test',
+      value: 1,
+    });
+
+    done();
+  });
+
   it('timeout works as expected', (done) => {
     const store = new Store<{ value: number }>({ cacheMS: 1500 });
 
