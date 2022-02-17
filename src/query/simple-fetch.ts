@@ -31,7 +31,9 @@ export function simpleFetch<STATE extends CommonState = CommonState>(
   return fetch().pipe(
     tap(disableLoading, disableLoading),
     tap((result) => {
-      store.update(result);
+      if (result) {
+        store.update(result);
+      }
     }),
     map((x) => x as STATE)
   ) as Observable<STATE>;
